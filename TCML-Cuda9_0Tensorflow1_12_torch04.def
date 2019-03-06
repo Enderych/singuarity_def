@@ -1,0 +1,78 @@
+#header
+Bootstrap: docker
+From: tensorflow/tensorflow:1.12.0-gpu
+
+#Sections
+
+%help
+Singularity image of the  tensorflow/tensorflow:1.12.0-gpu docker container.
+OS: Ubuntu 16.04
+Cuda: 9.0.176
+Tensorflow-gpu: 1.12.0
+Keras: 2.2.4
+Python: 2.7
+Pytorch 0.4.1
+OpenCV 3.4.3
+
+%setup
+# commands ecexuted on the host system after os has been installed
+
+%files
+# copy files from the host system here
+
+%labels
+# information labels about the container  saved in /.singularity.d/labels.json
+  maintainer Chenhao Yang <chenhao.yang@uni-tuebingen.de>
+  Version v0.1
+# overwrite  True= to be able to build it multiple times
+  overwrite False
+  tensorflow_gpu.version 1.12.0
+  keras.version 2.2.4
+  pytorch.version 0.4.1
+  python.version 2.7
+  opencv.version 3.4.3
+
+%environment
+# set environment variables
+
+
+
+
+%post
+#commands executed inside the container after os has been installed. Used for setup of the container
+#devine env variables for build time
+pip2 install --upgrade pip
+pip2 install keras
+pip2 install pyro4
+pip2 install pandas
+pip2 install https://download.pytorch.org/whl/cu90/torch-0.4.1-cp27-cp27mu-linux_x86_64.whl torchvision
+apt-get update
+apt-get -y install wget
+apt-get -y install python-tk
+apt-get -y install python-opencv
+pip2 install opencv-contrib-python
+
+
+
+%runscript
+# commands that are run when container's run command is used
+
+
+%test
+# validate setup at the end of the build process
+
+    echo '------------------------------------------------------------------'
+    echo 'Versions of installed tools:'
+    echo 'setuptools:' $(pip2 show setuptools | grep Version)
+    echo 'pandas:' $(pip2 show pandas | grep Version)
+    echo 'pyro4:' $(pip2 show pyro4 | grep Version)
+    echo 'tensorflow-gpu:' $(pip2 show tensorflow-gpu | grep Version)
+        echo 'torch:' $(pip2 show torch | grep Version)
+        echo 'keras:' $(pip2 show keras | grep Version)
+        echo 'cuda:' $(nvcc --version)
+    echo 'opencv:'
+        python -c 'import cv2
+print(cv2.__version__)'
+    echo '------------------------------------------------------------------'
+
+
